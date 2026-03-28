@@ -1,0 +1,78 @@
+# DevStore Monorepo Tree
+
+```text
+devstore/
+  .env.example
+  .gitignore
+  README.md
+  docker-compose.yml
+  scripts/
+    k6-seckill.js
+  server/
+    cmd/api/main.go
+    configs/
+      config.yaml.example
+      config.local.example.yaml
+      config.local.yaml
+    docs/openapi.yaml
+    go.mod
+    scripts/
+      init.sql
+    internal/
+      bootstrap/
+      common/
+      config/
+      middleware/
+      model/
+      module/
+      pkg/
+      router/
+  web/
+    package.json
+    src/
+      api/
+      components/
+      layouts/
+      router/
+      stores/
+      styles/
+      views/
+        home/index.vue
+        orders/index.vue
+        seckill/index.vue
+  admin/
+    package.json
+    src/
+      api/
+      components/
+      layouts/
+      router/
+      stores/
+      styles/
+      views/
+        dashboard/index.vue
+  deploy/
+    docker/
+      admin.Dockerfile
+      server.Dockerfile
+      web.Dockerfile
+    grafana/
+    mysql/
+      devstore-all.sql
+      init.sql
+    nginx/
+    prometheus/
+  docs/
+    api/
+    architecture/
+      project-tree.md
+    design/
+      mq-design.md
+      redis-keys.md
+    runbooks/
+      github-publish.md
+      server-deployment.md
+```
+
+`deploy/mysql/devstore-all.sql` is the canonical full database bootstrap script.
+`deploy/mysql/init.sql` and `server/scripts/init.sql` are compatibility entrypoints that forward to the canonical script.

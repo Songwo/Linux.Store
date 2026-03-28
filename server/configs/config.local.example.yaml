@@ -1,0 +1,58 @@
+app:
+  name: devstore-server
+  env: local
+  port: 8081
+  read_timeout: 10s
+  write_timeout: 10s
+  shutdown_timeout: 10s
+
+mysql:
+  dsn: root:123456@tcp(127.0.0.1:3306)/devstore?charset=utf8mb4&parseTime=True&loc=Local
+  max_open_conns: 30
+  max_idle_conns: 10
+  conn_max_lifetime: 30m
+
+redis:
+  addr: 127.0.0.1:6379
+  password: ""
+  db: 0
+  pool_size: 50
+
+rabbitmq:
+  url: amqp://guest:guest@127.0.0.1:5672/
+
+jwt:
+  secret: replace-with-long-random-secret
+  expire_hours: 168
+  issuer: devstore
+
+card_secret:
+  encryption_key: replace-with-32-byte-key
+
+log:
+  level: info
+  encoding: json
+
+otel:
+  enabled: false
+  endpoint: ""
+  service_name: devstore-server
+
+prometheus:
+  enabled: true
+
+oauth:
+  linux_do:
+    client_id: ""
+    client_secret: ""
+    redirect_url: "http://localhost:5173/oauth/linux-do/callback"
+    authorize_url: "https://connect.linux.do/oauth2/authorize"
+    token_url: "https://connect.linux.do/oauth2/token"
+    user_info_url: "https://connect.linux.do/api/user"
+    proxy_url: ""
+
+rate_limit:
+  enabled: true
+  global_rps: 2000
+  user_rps: 20
+  burst: 40

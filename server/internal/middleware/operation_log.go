@@ -1,0 +1,109 @@
+package middleware
+
+import (
+	"bytes"
+	"io"
+	"strings"
+	"time"
+
+	"devstore/server/internal/model"
+	"github.com/gin-gonic/gin"
+	"go.uber.org/zap"
+	"gorm.io/gorm"
+)
+
+type bodyLogWriter struct {
+	gin.ResponseWriter
+	body *bytes.Buffer
+}
+
+func (w *bodyLogWriter) Write(data []byte) (int, error) {
+	w.body.Write(data)
+	return w.ResponseWriter.Write(data)
+}
+
+func OperationLog(db *gorm.DB, log *zap.Logger) gin.HandlerFunc {
+	return func(c *gin.Context) {
+		if !strings.HasPrefix(c.Request.URL.Path, "/api/v1/admin/") {
+			c.Next()
+			return
+		}
+
+		var requestBody []byte
+		if c.Request.Body != nil {
+			body, err := io.ReadAll(c.Request.Body)
+			if err == nil {
+				requestBody = body
+				c.Request.Body = io.NopCloser(bytes.NewBuffer(body))
+			}
+		}
+
+		writer := &bodyLogWriter{ResponseWriter: c.Writer, body: bytes.NewBuffer(nil)}
+		c.Writer = writer
+		startedAt := time.Now()
+		c.Next()
+
+		module, action := resolveModuleAction(c.Request.URL.Path, c.Request.Method)
+		operatorID := uint64(c.GetUint64("user_id"))
+		entry := &model.OperationLog{
+			OperatorType: operatorType(operatorID),
+			Module:       module,
+			Action:       action,
+			Method:       c.Request.Method,
+			Path:         c.Request.URL.Path,
+			IP:           c.ClientIP(),
+			RequestBody:  sanitizeOperationLogBody(c.Request.URL.Path, normalizeJSON(requestBody)),
+			ResponseBody: sanitizeOperationLogBody(c.Request.URL.Path, normalizeJSON(writer.body.Bytes())),
+			CreatedAt:    &startedAt,
+		}
+		if operatorID > 0 {
+			entry.OperatorID = &operatorID
+		}
+		if err := db.WithContext(c.Request.Context()).Create(entry).Error; err != nil {
+			log.Warn("write operation log failed", zap.Error(err), zap.String("path", c.Request.URL.Path))
+		}
+	}
+}
+
+func resolveModuleAction(path, method string) (string, string) {
+	segments := strings.Split(strings.Trim(path, "/"), "/")
+	if len(segments) < 4 {
+		return "admin", strings.ToLower(method)
+	}
+	module := segments[3]
+	action := strings.ToLower(method)
+	if len(segments) > 4 {
+		action = strings.Join(segments[4:], "_")
+	}
+	if action == "" {
+		action = strings.ToLower(method)
+	}
+	return module, action
+}
+
+func operatorType(operatorID uint64) string {
+	if operatorID > 0 {
+		return "admin"
+	}
+	return "anonymous"
+}
+
+func normalizeJSON(data []byte) string {
+	trimmed := strings.TrimSpace(string(data))
+	if trimmed == "" {
+		return "{}"
+	}
+	return trimmed
+}
+
+func sanitizeOperationLogBody(path, body string) string {
+	cleanPath := strings.ToLower(strings.TrimSpace(path))
+	cleanBody := strings.ToLower(strings.TrimSpace(body))
+	if strings.Contains(cleanPath, "/admin/card-secret-items/import") {
+		return "{\"redacted\":true,\"reason\":\"sensitive card secret payload\"}"
+	}
+	if strings.Contains(cleanBody, `"card_code"`) || strings.Contains(cleanBody, `"card_password"`) || strings.Contains(cleanBody, `"redeem_code"`) || strings.Contains(cleanBody, `"encrypted_payload"`) {
+		return "{\"redacted\":true,\"reason\":\"sensitive card secret payload\"}"
+	}
+	return body
+}

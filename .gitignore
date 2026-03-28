@@ -1,0 +1,40 @@
+# OS / IDE
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+
+# Git / local metadata
+.git/
+.codex/
+
+# Node
+node_modules/
+dist/
+*.tsbuildinfo
+npm-debug.log*
+
+# Go
+.gocache/
+.gomodcache/
+server/*.exe
+server/*.test
+coverage.out
+
+# Local config and secrets
+.env
+.env.local
+.env.*.local
+!.env.example
+server/configs/config.local.yaml
+
+# Runtime / logs
+*.log
+web/err.txt
+
+# Docker / cache
+mysql-data/
+redis-data/
+rabbitmq-data/
+prometheus-data/
+grafana-data/

@@ -1,0 +1,133 @@
+:root {
+  /* Linear Dark Theme / Stripe Premium Feel */
+  --admin-bg: #0a0a0a;
+  --admin-bg-secondary: #111111;
+  --admin-panel: rgba(255, 255, 255, 0.03);
+  --admin-panel-hover: rgba(255, 255, 255, 0.06);
+  --admin-border: rgba(255, 255, 255, 0.08);
+  --admin-border-highlight: rgba(255, 255, 255, 0.15);
+  --admin-text-main: #ededed;
+  --admin-text-secondary: #a1a1aa;
+  --admin-text-muted: #52525b;
+  --admin-primary: #f8fafc;
+  --admin-accent: #14b8a6;
+  
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-xl: 16px;
+  --radius-2xl: 24px;
+}
+
+* { box-sizing: border-box; }
+
+html, body, #app { 
+  margin: 0; 
+  min-height: 100vh; 
+  font-family: 'Inter', "SF Pro Display", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  background: var(--admin-bg); 
+  color: var(--admin-text-main); 
+  -webkit-font-smoothing: antialiased;
+}
+
+a { 
+  color: inherit; 
+  text-decoration: none; 
+  transition: color 0.2s;
+}
+
+/* Glass panel */
+.admin-panel { 
+  background: var(--admin-panel); 
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid var(--admin-border); 
+  border-radius: var(--radius-xl); 
+  box-shadow: 0 4px 24px -4px rgba(0,0,0,0.5);
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.admin-panel:hover {
+  border-color: var(--admin-border-highlight);
+}
+
+/* Base element overrides */
+h1, h2, h3, h4, h5, h6 { 
+  margin: 0; 
+  font-weight: 700; 
+  letter-spacing: -0.02em; 
+}
+
+/* Element UI overrides for dark mode */
+.el-button {
+  background: var(--admin-panel);
+  border: 1px solid var(--admin-border);
+  color: var(--admin-text-main);
+}
+.el-button:hover {
+  background: var(--admin-panel-hover);
+  border-color: var(--admin-border-highlight);
+  color: white;
+}
+.el-table {
+  background-color: transparent !important;
+  color: var(--admin-text-main) !important;
+  --el-table-border-color: var(--admin-border) !important;
+  --el-table-header-bg-color: rgba(255,255,255,0.02) !important;
+  --el-table-header-text-color: var(--admin-text-secondary) !important;
+  --el-table-tr-bg-color: transparent !important;
+  --el-table-row-hover-bg-color: var(--admin-panel-hover) !important;
+}
+
+/* Utilities */
+.fade-in-up {
+  animation: fadeInUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+@keyframes fadeInUp {
+  0% { opacity: 0; transform: translateY(16px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar { width: 8px; height: 8px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--admin-border-highlight); border-radius: 999px; }
+::-webkit-scrollbar-thumb:hover { background: var(--admin-text-muted); }
+
+/* Global Dialog Dark Mode */
+.el-dialog {
+  background: var(--admin-bg-secondary) !important;
+  border: 1px solid var(--admin-border) !important;
+  border-radius: var(--radius-xl) !important;
+  box-shadow: 0 24px 48px -12px rgba(0,0,0,0.5) !important;
+  margin-top: 10vh !important;
+}
+.el-dialog__title {
+  color: var(--admin-text-main) !important;
+}
+.el-dialog__body {
+  color: var(--admin-text-secondary) !important;
+  max-height: 70vh;
+  overflow-y: auto;
+}
+.el-form-item__label {
+  color: var(--admin-text-secondary) !important;
+}
+.el-input__wrapper, .el-textarea__inner, .el-input-number {
+  background-color: rgba(255,255,255,0.05) !important;
+  box-shadow: none !important;
+  border: 1px solid var(--admin-border) !important;
+}
+.el-input__inner {
+  color: var(--admin-text-main) !important;
+}
+.el-select-dropdown__item {
+  color: var(--admin-text-main) !important;
+}
+.el-select-dropdown {
+  background: var(--admin-bg-secondary) !important;
+  border: 1px solid var(--admin-border) !important;
+}
+.el-picker-panel {
+  background: var(--admin-bg-secondary) !important;
+  color: var(--admin-text-main) !important;
+}
