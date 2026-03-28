@@ -3,7 +3,7 @@ import { useRouter } from 'vue-router';
 import { useAdminStore } from '@/stores/admin';
 const router = useRouter();
 const store = useAdminStore();
-const form = reactive({ username: 'admin', password: 'Admin@123456' });
+const form = reactive({ username: '', password: '' });
 async function submit() { await store.login(form); router.push('/'); }
 debugger; /* PartiallyEnd: #3632/scriptSetup.vue */
 const __VLS_ctx = {};

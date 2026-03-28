@@ -20,6 +20,7 @@ function createManualChunks(id) {
     return 'vendor';
 }
 export default defineConfig({
+    base: '/admin/',
     plugins: [vue()],
     resolve: {
         alias: { '@': fileURLToPath(new URL('./src', import.meta.url)) },

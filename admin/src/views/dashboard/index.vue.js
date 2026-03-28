@@ -15,14 +15,30 @@ const stats = computed(() => [
     { label: 'Gross Volume', value: `￥${Number(summary.value.gmv).toFixed(2)}`, desc: `Pending: ${summary.value.pending_pay_count}`, icon: '💳' },
     { label: 'Campaigns', value: String(summary.value.campaign_count), desc: `Seckill orders: ${summary.value.seckill_order_count}`, icon: '🎯' },
 ]);
-const activities = [
-    { module: 'Seckill', event: 'Weekend Seckill stock warming up completed.', time: '2026-03-20 18:00' },
-    { module: 'Orders', event: 'Delayed order closing worker started successfully.', time: '2026-03-20 18:10' },
-    { module: 'Users', event: 'Linux.do OAuth reward points mapping updated.', time: '2026-03-20 19:00' },
-];
+const activities = ref([]);
+function buildActivities(data) {
+    const now = new Date();
+    const fmt = (d) => d.toLocaleString('zh-CN', { hour12: false }).replace(/\//g, '-');
+    const list = [];
+    if (data.today_paid_count > 0) {
+        list.push({ module: 'Orders', event: `今日已支付订单 ${data.today_paid_count} 笔`, time: fmt(now) });
+    }
+    if (data.pending_pay_count > 0) {
+        list.push({ module: 'Orders', event: `待支付订单 ${data.pending_pay_count} 笔，等待用户付款`, time: fmt(now) });
+    }
+    if (data.seckill_order_count > 0) {
+        list.push({ module: 'Seckill', event: `秒杀订单累计 ${data.seckill_order_count} 笔`, time: fmt(now) });
+    }
+    if (data.campaign_count > 0) {
+        list.push({ module: 'Campaign', event: `活动总数 ${data.campaign_count} 个，秒杀系统运行中`, time: fmt(now) });
+    }
+    list.push({ module: 'Users', event: `注册用户总量 ${data.user_count} 人`, time: fmt(now) });
+    activities.value = list;
+}
 async function loadDashboard() {
     const res = await http.get('/admin/dashboard');
     summary.value = res.data;
+    buildActivities(res.data);
 }
 onMounted(loadDashboard);
 debugger; /* PartiallyEnd: #3632/scriptSetup.vue */
